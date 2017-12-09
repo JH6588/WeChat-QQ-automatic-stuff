@@ -1,18 +1,14 @@
 #include <File.au3>
 
-Global $filename = "my.txt"
+Global $filename = "my.txt"  
 
 HotKeySet("h", "ExitProgram")
-
 
 AutoItSetOption('MouseCoordMode',0)
 
 
-WinWait("QQ","",10)
-WinActivate("QQ")
-MouseClick("primary",55,514,1,0) ;add button"
-
-WinWait("查找","",20)
+; 先点击 "+" 按钮 ，弹出查找好友的gui界面，
+;后运行程序
 
 LoopTXT()
 
