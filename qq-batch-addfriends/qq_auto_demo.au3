@@ -6,7 +6,6 @@ HotKeySet("h", "ExitProgram")
 
 AutoItSetOption('MouseCoordMode',0)
 
-
 ; 先点击 "+" 按钮 ，弹出查找好友的gui界面，
 ;后运行程序
 
