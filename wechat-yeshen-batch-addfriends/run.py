@@ -1,5 +1,5 @@
-from  configparser import ConfigParser
-from  wechat_add import *
+from configparser import ConfigParser
+from wechat_add import *
 import random
 import time
 import configparser
@@ -43,7 +43,7 @@ def get_init_yeshens():
         yeshen_number = int(config.get('multi', 'number'))
         yeshen_length = int(config.get('multi', 'length'))
         _yeshen_xy = get_each_mark(yeshen_length=yeshen_length, yeshen_num=yeshen_number)
-        yeshen_infos0 = [{'mark': ele} for ele in _yeshen_xy]
+        yeshen_infos0 = [{'position': ele} for ele in _yeshen_xy]
         try:
             do = config.get('multi', 'do')
             _do = [int(i) for i in do.split("---")]
@@ -53,7 +53,7 @@ def get_init_yeshens():
             yeshen_infos = yeshen_infos0
         return yeshen_infos
     else:
-        return [{"mark": yeshen_position}]
+        return [{"position": yeshen_position}]
 
 
 def choose_yeshen(yeshen_infos):
@@ -110,7 +110,7 @@ def main(my_ok_yeshens):
     if is_multi:
         pyautogui.click(yeshen_position)
         time.sleep(1)
-    pyautogui.click(ys['mark'])
+    pyautogui.click(ys['position'])
     c = 0
     with  open(acct_file_name, encoding="utf8") as f:
         for line in f:
@@ -132,12 +132,12 @@ def main(my_ok_yeshens):
                 if is_multi:
                     pyautogui.click(yeshen_position)
                     time.sleep(1)
-                pyautogui.click(ys['mark'])
+                pyautogui.click(ys['position'])
 
 
 if __name__ == '__main__':
     print("休息10s后即将启动")
-    print("author:", "https://github.com/summerlove66")
+    print("author", "https://github.com/summerlove66")
     time.sleep(10)
     log = get_logger(filename="added.log")
     my_yeshens = get_init_yeshens()
