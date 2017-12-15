@@ -22,7 +22,7 @@ yeshen_position = (int(unit_leng * 1.5), screen[1] - int(unit_width * 0.5))
 print("yeshen_position", yeshen_position)
 
 
-def get_each_mark(yeshen_length, yeshen_num):
+def get_each_position(yeshen_length, yeshen_num):
     y = yeshen_position[1] - unit_leng
     x_unit = yeshen_length / yeshen_num
     xy = [(int(x_unit / 2 + x_unit * m), y) for m in range(yeshen_num)]
@@ -42,7 +42,7 @@ def get_init_yeshens():
     if is_multi:
         yeshen_number = int(config.get('multi', 'number'))
         yeshen_length = int(config.get('multi', 'length'))
-        _yeshen_xy = get_each_mark(yeshen_length=yeshen_length, yeshen_num=yeshen_number)
+        _yeshen_xy = get_each_position(yeshen_length=yeshen_length, yeshen_num=yeshen_number)
         yeshen_infos0 = [{'position': ele} for ele in _yeshen_xy]
         try:
             do = config.get('multi', 'do')
