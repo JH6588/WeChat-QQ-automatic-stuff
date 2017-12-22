@@ -2,6 +2,7 @@ from configparser import ConfigParser
 from wechat_add import *
 import random
 import time
+import datetime
 import configparser
 from mylog import get_logger
 from itertools import cycle
@@ -14,13 +15,31 @@ unit_width = config.getint("unit", "width")
 
 unit_leng = config.getint("unit", "length")
 
-acct_file_name = "acct.txt"
+
 
 screen = pyautogui.size()
 yeshen_position = (int(unit_leng * 1.5), screen[1] - int(unit_width * 0.5))
 
 print("yeshen_position", yeshen_position)
 
+
+class AcctSource:
+    acct_file_name = "acct.txt"
+    @classmethod
+    def read_source(cls):
+        with open(AcctSource.acct_file_name) as f:
+            for line in f:
+                yield line
+    @classmethod
+    def close_source(cls ,ger):
+
+        with open(AcctSource.acct_file_name ,"w" ) as g:
+
+            while True:
+                try:
+                    g.write(next(ger))
+                except StopIteration :
+                    break
 
 def get_each_position(yeshen_length, yeshen_num):
     y = yeshen_position[1] - unit_leng
@@ -64,9 +83,12 @@ def choose_yeshen(yeshen_infos):
         ys = next(cycle_yeshens)
         print("备选微信坐标详情", ys)
         if ys.get("sleep") != None:
-            if time.time() - ys['sleep_start'] > ys.get('sleep'):
+            waited_times = time.time() - ys['sleep_start']
+            if waited_times > ys.get('sleep'):
                 confirm_to_run(text="已找到可用微信，将进入自动运行, 默认继续", title="寻找微信", timeout=3000)
                 yield ys
+            else:
+                print(ys,"还需要等待" ,int(ys.get('sleep') -waited_times))
         else:
             confirm_to_run(text="已找到可用微信，将进入自动运行,默认继续", title="寻找微信", timeout=3000)
 
@@ -102,6 +124,7 @@ def run(wt, ys, wechat_number):
     return res  # 0 ,1,2  0 ：not exist 1,ok  2 ,repeat
 
 
+
 def main(my_ok_yeshens):
     add_number_max = int(get_random_configuration("number", "number"))
 
@@ -112,39 +135,44 @@ def main(my_ok_yeshens):
         time.sleep(1)
     pyautogui.click(ys['position'])
     c = 0
-    with  open(acct_file_name, encoding="utf8") as f:
-        for line in f:
-            c += 1
-            wt = get_current_wechat()
-            result = run(wt, ys, line.strip())
-            print("运行结果", result)
-            log.info(line + "  -->" + str(result))
 
-            if c == add_number_max or result not in (0, 1, 2):
 
-                print("开始最小化", result, c, add_number_max)
-                pyautogui.click(wt.minimum_mark)  # 最小化
-                c = 0
-                add_number_max = int(get_random_configuration("number", "number"))
-                print(int(get_random_configuration("sleep", "round_sleep")), "休息。。。。")
-                time.sleep(int(get_random_configuration("sleep", "round_sleep")))
-                ys = next(my_ok_yeshens)
-                if is_multi:
-                    pyautogui.click(yeshen_position)
-                    time.sleep(1)
-                pyautogui.click(ys['position'])
+    for line in source:
+        c += 1
+        wt = get_current_wechat()
+        result = run(wt, ys, line.strip())
+        print("运行结果", result)
+        log.info(line + "  -->" + str(result))
+
+        if c == add_number_max or result not in (0, 1, 2):
+
+            print("开始最小化", result, c, add_number_max)
+            pyautogui.click(wt.minimum_mark)  # 最小化
+            c = 0
+            add_number_max = int(get_random_configuration("number", "number"))
+            print(datetime.datetime.now() , int(get_random_configuration("sleep", "round_sleep")), "休息。。。。")
+            time.sleep(int(get_random_configuration("sleep", "round_sleep")))
+            ys = next(my_ok_yeshens)
+            if is_multi:
+                pyautogui.click(yeshen_position)
+                time.sleep(1)
+            pyautogui.click(ys['position'])
 
 
 if __name__ == '__main__':
     print("休息10s后即将启动")
-    print("author", "https://github.com/summerlove66")
+    print("author", "Patrick")
     time.sleep(10)
     log = get_logger(filename="added.log")
     my_yeshens = get_init_yeshens()
     my_ok_yeshens = choose_yeshen(my_yeshens)
+    source = AcctSource.read_source()
+
     try:
         main(my_ok_yeshens)
     except KeyboardInterrupt:
         pass
     finally:
+        print(source)
+        AcctSource.close_source(source)
         print("程序结束")
