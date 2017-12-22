@@ -92,7 +92,7 @@ class WechatPosition:
         for position in self.check_marks_ponit(check_mark, 3, 1):
             color = pyautogui.pixel(position[0], position[1])
             print("判断是否频繁", color)
-            if color[0] < 250:
+            if color[0] < 255:
                 return 1
 
     def judge_isfriend(self, check_mark):  #判断是否已经为好友
